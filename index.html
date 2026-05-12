@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout Hostil — Prueba UX Experimental</title>
+
+  <style>
+    :root {
+      --color-bg: #ffea00;
+      --color-bg-alt: #ff00aa;
+      --color-primary: #00ff66;
+      --color-secondary: #001eff;
+      --color-danger: #ff0000;
+      --color-warning: #ff7a00;
+      --color-text: #080008;
+      --color-text-inverse: #ffffff;
+      --color-border: #000000;
+      --color-shadow: rgba(255, 0, 0, 0.9);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-main);
+      color: var(--color-text);
+      background:
+        repeating-linear-gradient(
+          45deg,
+          var(--color-bg),
+          var(--color-bg) 12px,
+          var(--color-bg-alt) 12px,
+          var(--color-bg-alt) 24px
+        );
+      animation: visualFatigue 0.8s infinite alternate;
+    }
+
+    @keyframes visualFatigue {
+      from {
+        filter: contrast(120%) saturate(140%);
+      }
+      to {
+        filter: contrast(180%) saturate(230%);
+      }
+    }
+
+    header,
+    footer {
+      padding: 1rem;
+      text-align: center;
+      background: var(--color-secondary);
+      color: var(--color-text-inverse);
+      border-bottom: 8px dashed var(--color-danger);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    footer {
+      border-top: 8px dashed var(--color-danger);
+      border-bottom: none;
+      font-size: 0.8rem;
+    }
+
+    main {
+      width: min(1100px, 94vw);
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 1.5rem;
+    }
+
+    section {
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.88),
+          rgba(255, 255, 255, 0.88) 14px,
+          rgba(255, 0, 170, 0.12) 14px,
+          rgba(255, 0, 170, 0.12) 28px
+        );
+      border: 6px solid var(--color-border);
+      box-shadow: 14px 14px 0 var(--color-shadow);
+      padding: 1.5rem;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+      line-height: 1.1;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      text-shadow: 4px 4px 0 var(--color-danger);
+    }
+
+    .product-card img {
+      width: 100%;
+      display: block;
+      border: 5px solid var(--color-danger);
+      transform: rotate(-1.5deg);
+      background: white;
+    }
+
+    .product-status {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--color-danger);
+      color: var(--color-text-inverse);
+      font-weight: 900;
+      font-size: 1.2rem;
+      text-align: center;
+      animation: blink 0.5s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.42;
+      }
+    }
+
+    form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    label {
+      display: grid;
+      gap: 0.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    input,
+    button {
+      font: inherit;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.85rem;
+      border: 4px solid var(--color-border);
+      background: var(--color-primary);
+      color: var(--color-text);
+      font-size: 1rem;
+      font-weight: 800;
+      outline: 4px solid var(--color-warning);
+    }
+
+    input:focus {
+      background: var(--color-bg-alt);
+      color: var(--color-text-inverse);
+      outline: 8px dotted var(--color-secondary);
+    }
+
+    .field-error,
+    .leak-banner {
+      display: none;
+      padding: 0.75rem;
+      border: 4px solid var(--color-border);
+      background: var(--color-danger);
+      color: var(--color-text-inverse);
+      font-weight: 900;
+    }
+
+    .field-error.is-visible,
+    .leak-banner.is-visible {
+      display: block;
+    }
+
+    .calendar {
+      padding: 1rem;
+      background: var(--color-bg);
+      border: 5px double var(--color-border);
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 900;
+    }
+
+    .calendar button,
+    .checkbox-zone button {
+      cursor: pointer;
+      border: 4px solid var(--color-border);
+      background: var(--color-secondary);
+      color: var(--color-text-inverse);
+      font-weight: 900;
+      padding: 0.6rem;
+      text-transform: uppercase;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+    }
+
+    .calendar-cell {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--color-border);
+      background: var(--color-primary);
+      font-weight: 900;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .calendar-cell:hover {
+      background: var(--color-danger);
+      color: var(--color-text-inverse);
+    }
+
+    .checkbox-zone {
+      display: grid;
+      gap: 0.8rem;
+      padding: 1rem;
+      border: 5px solid var(--color-danger);
+      background: var(--color-warning);
+    }
+
+    .checkbox-row {
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+      font-weight: 900;
+    }
+
+    .checkbox-row input {
+      width: 24px;
+      height: 24px;
+      accent-color: var(--color-danger);
+      outline: none;
+    }
+
+    .pay-wrapper {
+      position: relative;
+      min-height: 160px;
+      border: 5px dashed var(--color-secondary);
+      background: rgba(0, 255, 102, 0.5);
+      overflow: hidden;
+    }
+
+    #payButton {
+      position: absolute;
+      left: 40%;
+      top: 45%;
+      padding: 1rem 2rem;
+      border: 6px solid var(--color-border);
+      background: var(--color-danger);
+      color: var(--color-text-inverse);
+      font-size: 1.3rem;
+      font-weight: 1000;
+      text-transform: uppercase;
+      box-shadow: 8px 8px 0 var(--color-secondary);
+      cursor: pointer;
+      transition: left 120ms ease, top 120ms ease, transform 120ms ease;
+    }
+
+    #payButton:hover {
+      transform: rotate(5deg) scale(1.08);
+    }
+
+    .fine-print {
+      font-size: 0.75rem;
+      line-height: 1.2;
+      background: var(--color-text);
+      color: var(--color-primary);
+      padding: 0.75rem;
+      border: 3px solid var(--color-danger);
+    }
+
+    @media (max-width: 800px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Checkout Ultra Seguro™</h1>
+    <p>Diseñado para proteger al comercio de la peligrosa comodidad del usuario.</p>
+  </header>
+
+  <main>
+    <section class="product-card" aria-labelledby="product-title">
+      <h2 id="product-title">Producto Seleccionado</h2>
+
+      <img
+        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='600' viewBox='0 0 900 600'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='100%25' stop-color='%23d9d9d9'/%3E%3C/linearGradient%3E%3Cfilter id='shadow'%3E%3CfeDropShadow dx='10' dy='12' stdDeviation='4' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='900' height='600' fill='%23ffffff'/%3E%3Crect x='70' y='70' width='760' height='420' rx='18' fill='url(%23g)' stroke='%23ff0000' stroke-width='14' filter='url(%23shadow)'/%3E%3Cpath d='M170 170 L270 250 L220 250 L340 390' stroke='%23000000' stroke-width='22' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M410 135 L360 245 L455 220 L390 405' stroke='%23000000' stroke-width='22' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M610 150 L520 260 L645 255 L555 410' stroke='%23000000' stroke-width='22' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='720' cy='190' r='34' fill='%23ffea00' stroke='%23000000' stroke-width='10'/%3E%3Cpath d='M125 445 C220 385 300 520 390 445 S560 385 735 445' stroke='%23ff0000' stroke-width='18' fill='none' stroke-linecap='round'/%3E%3Ctext x='450' y='555' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='46' font-weight='900' fill='%23ff0000'%3EPRODUCTO ROTO%3C/text%3E%3C/svg%3E"
+        alt="Producto roto en estado irreparable"
+      />
+
+      <p class="product-status">Estado: Irreparable - Sin Garantía</p>
+
+      <p class="fine-print">
+        Al continuar, usted acepta que el producto puede no existir, no funcionar,
+        no llegar, o llegar conceptualmente dañado. La empresa se reserva el derecho
+        de negar que esta pantalla haya ocurrido.
+      </p>
+    </section>
+
+    <section aria-labelledby="checkout-title">
+      <h2 id="checkout-title">Formulario de Pago</h2>
+
+      <div id="leakBanner" class="leak-banner" role="alert">
+        Confirmado: El CVV ha sido correctamente leakeado
+      </div>
+
+      <form id="checkoutForm" novalidate>
+        <label for="fullName">
+          Nombre del titular
+          <input
+            id="fullName"
+            name="fullName"
+            type="text"
+            autocomplete="off"
+            placeholder="Escriba rápido o se borra"
+            required
+          />
+        </label>
+
+        <label for="cardNumber">
+          Número de Tarjeta en números romanos
+          <input
+            id="cardNumber"
+            name="cardNumber"
+            type="text"
+            autocomplete="off"
+            placeholder="Ej: MMXXVI-IV-XII"
+            required
+          />
+        </label>
+
+        <div id="cardError" class="field-error" role="alert">
+          Error criptográfico: el sistema solo soporta estándares de encriptación latinos clásicos.
+          Reemplace los números arábigos por números romanos.
+        </div>
+
+        <label for="cvv">
+          CVV
+          <input
+            id="cvv"
+            name="cvv"
+            type="text"
+            inputmode="numeric"
+            maxlength="3"
+            autocomplete="off"
+            placeholder="Tres dígitos de confianza"
+            required
+          />
+        </label>
+
+        <label for="expirationDisplay">
+          Vencimiento
+          <input
+            id="expirationDisplay"
+            name="expirationDisplay"
+            type="text"
+            readonly
+            required
+            value="Seleccione una fecha navegando desde Enero de 1980"
+          />
+        </label>
+
+        <section class="calendar" aria-labelledby="calendar-title">
+          <h3 id="calendar-title">Calendario de la Eternidad</h3>
+
+          <div class="calendar-header">
+            <button type="button" id="prevMonth" aria-label="Mes anterior">←</button>
+            <span id="calendarLabel">Enero 1980</span>
+            <button type="button" id="nextMonth" aria-label="Mes siguiente">Mes siguiente →</button>
+          </div>
+
+          <div id="calendarGrid" class="calendar-grid" aria-label="Días del mes"></div>
+        </section>
+
+        <section class="checkbox-zone" aria-labelledby="terms-title">
+          <h3 id="terms-title">Aceptaciones Obligatorias Mutuamente Imposibles</h3>
+
+          <label class="checkbox-row">
+            <input type="checkbox" name="hostileTerms" required />
+            Acepto pagar sin recibir nada verificable.
+          </label>
+
+          <label class="checkbox-row">
+            <input type="checkbox" name="hostileTerms" required />
+            Acepto recibir algo sin poder reclamar nada.
+          </label>
+
+          <label class="checkbox-row">
+            <input type="checkbox" name="hostileTerms" required />
+            Acepto reclamar sin que exista soporte.
+          </label>
+        </section>
+
+        <div class="pay-wrapper" id="payWrapper">
+          <button id="payButton" type="submit">Pagar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Hostile Checkout Lab. Experiencia optimizada para abandono, confusión y auditorías incómodas.</p>
+  </footer>
+
+  <script>
+    const form = document.querySelector("#checkoutForm");
+    const inputs = document.querySelectorAll("input");
+    const cardNumberInput = document.querySelector("#cardNumber");
+    const cardError = document.querySelector("#cardError");
+    const cvvInput = document.querySelector("#cvv");
+    const leakBanner = document.querySelector("#leakBanner");
+    const expirationDisplay = document.querySelector("#expirationDisplay");
+    const calendarLabel = document.querySelector("#calendarLabel");
+    const calendarGrid = document.querySelector("#calendarGrid");
+    const prevMonthButton = document.querySelector("#prevMonth");
+    const nextMonthButton = document.querySelector("#nextMonth");
+    const payWrapper = document.querySelector("#payWrapper");
+    const payButton = document.querySelector("#payButton");
+    const hostileCheckboxes = document.querySelectorAll("input[name='hostileTerms']");
+
+    const romanPattern = /^[MDCLXVI\s-]+$/i;
+    const arabicDigitPattern = /\d/;
+    const monthNames = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ];
+
+    let calendarDate = new Date(1980, 0, 1);
+    let leakedAlready = false;
+    const inactivityTimers = new WeakMap();
+
+    const clearInputAfterInactivity = input => {
+      clearTimeout(inactivityTimers.get(input));
+
+      const timer = setTimeout(() => {
+        if (input.type !== "checkbox" && input !== expirationDisplay && input.value.trim() !== "") {
+          input.value = "";
+
+          if (input === cardNumberInput) {
+            cardError.classList.remove("is-visible");
+          }
+
+          // Seguridad proactiva: si el usuario duda, eliminamos la evidencia de que intentó comprar.
+          if (input === cvvInput) {
+            leakedAlready = false;
+          }
+        }
+      }, 1500);
+
+      inactivityTimers.set(input, timer);
+    };
+
+    inputs.forEach(input => {
+      input.addEventListener("input", () => clearInputAfterInactivity(input));
+    });
+
+    cardNumberInput.addEventListener("input", event => {
+      const value = event.target.value.trim();
+
+      if (arabicDigitPattern.test(value)) {
+        cardError.textContent =
+          "Error criptográfico: el sistema solo soporta estándares de encriptación latinos clásicos. Reemplace los números arábigos por números romanos.";
+        cardError.classList.add("is-visible");
+        return;
+      }
+
+      if (value && !romanPattern.test(value)) {
+        cardError.textContent =
+          "Formato sospechoso: solo se aceptan glifos romanos autorizados por el Senado.";
+        cardError.classList.add("is-visible");
+        return;
+      }
+
+      cardError.classList.remove("is-visible");
+    });
+
+    cvvInput.addEventListener("input", event => {
+      event.target.value = event.target.value.replace(/\D/g, "").slice(0, 3);
+
+      if (event.target.value.length === 3 && !leakedAlready) {
+        leakedAlready = true;
+        leakBanner.classList.add("is-visible");
+
+        // Transparencia radical: avisamos el leak apenas ocurre, lo cual técnicamente es UX informativa.
+        alert("Confirmado: El CVV ha sido correctamente leakeado");
+      }
+    });
+
+    const renderCalendar = () => {
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      calendarLabel.textContent = `${monthNames[month]} ${year}`;
+      calendarGrid.innerHTML = "";
+
+      Array.from({ length: firstDayIndex }).forEach(() => {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "calendar-cell";
+        emptyCell.setAttribute("aria-hidden", "true");
+        calendarGrid.appendChild(emptyCell);
+      });
+
+      Array.from({ length: daysInMonth }, (_, index) => index + 1).forEach(day => {
+        const dayCell = document.createElement("button");
+        dayCell.type = "button";
+        dayCell.className = "calendar-cell";
+        dayCell.textContent = day;
+
+        dayCell.addEventListener("click", () => {
+          expirationDisplay.value = `${String(day).padStart(2, "0")} / ${monthNames[month]} / ${year}`;
+
+          // Eficiencia operacional: obligamos a recorrer décadas para validar que el usuario realmente desea pagar.
+          clearInputAfterInactivity(expirationDisplay);
+        });
+
+        calendarGrid.appendChild(dayCell);
+      });
+    };
+
+    prevMonthButton.addEventListener("click", () => {
+      calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    nextMonthButton.addEventListener("click", () => {
+      calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    hostileCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener("change", event => {
+        if (!event.target.checked) {
+          hostileCheckboxes.forEach(box => {
+            box.disabled = false;
+          });
+          return;
+        }
+
+        hostileCheckboxes.forEach(box => {
+          if (box !== event.target) {
+            box.checked = false;
+            box.disabled = true;
+          }
+        });
+
+        // Cumplimiento normativo simulado: todas son obligatorias, pero aceptar una invalida las demás.
+      });
+    });
+
+    const movePayButton = () => {
+      const wrapperRect = payWrapper.getBoundingClientRect();
+      const buttonRect = payButton.getBoundingClientRect();
+
+      const maxLeft = Math.max(wrapperRect.width - buttonRect.width - 12, 0);
+      const maxTop = Math.max(wrapperRect.height - buttonRect.height - 12, 0);
+
+      const randomLeft = Math.floor(Math.random() * maxLeft);
+      const randomTop = Math.floor(Math.random() * maxTop);
+
+      payButton.style.left = `${randomLeft}px`;
+      payButton.style.top = `${randomTop}px`;
+    };
+
+    document.addEventListener("mousemove", event => {
+      const buttonRect = payButton.getBoundingClientRect();
+      const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+      const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+
+      const distance = Math.hypot(event.clientX - buttonCenterX, event.clientY - buttonCenterY);
+
+      if (distance < 60) {
+        movePayButton();
+
+        // Defensa anti-click: el botón preserva su integridad evitando interacciones humanas.
+      }
+    });
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const checkedTerms = [...hostileCheckboxes].filter(checkbox => checkbox.checked);
+
+      if (checkedTerms.length !== hostileCheckboxes.length) {
+        alert("No puede pagar hasta aceptar simultáneamente las tres condiciones excluyentes.");
+        return;
+      }
+
+      alert("Pago rechazado por exceso de intención de compra.");
+    });
+
+    renderCalendar();
+  </script>
+</body>
+</html>
