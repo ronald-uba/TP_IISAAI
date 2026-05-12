@@ -6,7 +6,7 @@
 
 Actuá como un Ingeniero de Software Senior especializado en UX Experimental y Frontend. El objetivo es desarrollar una prueba de concepto para la materia Ingeniería de Software asistida por IA (FIUBA) que explore los límites del Dark UX y el Hostile Design en un flujo de checkout web.
 
-Generá un único archivo weird_checkout.html autocontenido que represente un formulario de pago deliberadamente diseñado para frustrar al usuario, cumpliendo estrictamente con lo siguiente:
+Generá un único archivo index.html autocontenido que represente un formulario de pago deliberadamente diseñado para frustrar al usuario, cumpliendo estrictamente con lo siguiente:
 
 1. Arquitectura y Estilo:
 
@@ -38,4 +38,4 @@ Añadí comentarios irónicos en el código sobre la "seguridad" y "eficiencia" 
 
 4. Restricciones de Salida:
 
-Entregá únicamente el bloque de código del archivo weird_checkout.html. Sin explicaciones adicionales.
+Entregá únicamente el bloque de código del archivo index.html. Sin explicaciones adicionales.
